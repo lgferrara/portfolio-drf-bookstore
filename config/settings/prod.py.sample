@@ -1,0 +1,39 @@
+import os
+from .base import *
+
+DEBUG = False
+
+# Hosts & CSRF
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if os.environ.get("DJANGO_ALLOWED_HOSTS") else []
+CSRF_TRUSTED_ORIGINS = os.environ.get("DJANGO_CSRF_TRUSTED", "").split(",") if os.environ.get("DJANGO_CSRF_TRUSTED") else []
+
+# Security (safe defaults for reverse proxy / TLS setups)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SECURE_HSTS_SECONDS = 31536000  # 1 year
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
+# Static files (if collected in prod)
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Secret key must come from the environment
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY or SECRET_KEY == "django-insecure-demo-key-not-for-production":
+    raise RuntimeError("DJANGO_SECRET_KEY must be set to a strong value in production")
+
+# Optional: use DATABASE_URL if present (fallback to base.py DB)
+# If you don’t want extra deps, keep SQLite. Otherwise:
+try:
+    import dj_database_url  # pip install dj-database-url
+    if os.environ.get("DATABASE_URL"):
+        DATABASES["default"] = dj_database_url.parse(os.environ["DATABASE_URL"], conn_max_age=600)
+except Exception:
+    # No change—stay with whatever base.py configured
+    pass
+
+# Optional: configure email via env
+EMAIL_BACKEND = os.environ.get("DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend")
+DEFAULT_FROM_EMAIL = os.environ.get("DJANGO_DEFAULT_FROM_EMAIL", "no-reply@example.com")

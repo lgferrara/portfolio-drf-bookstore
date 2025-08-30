@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Editor / IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Django / DB
+db.sqlite3
+*.sqlite3
+
+# Env files
+.env
+*.env
+
+# Migrations
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Static & media
+#staticfiles/
+#media/
+
+# ---- Packaging / Lock files ----
+Pipfile.lock
+# poetry.lock
